@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>旅行地球</title>
 
-    <script type="module" crossorigin src="./assets/index-BzYjXxOY.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-4syLXUfE.css">
+    <!-- 全局样式 — Vite 打包时自动处理 -->
+    <script type="module" crossorigin src="/assets/index-B5QR9ooy.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-4syLXUfE.css">
   </head>
   <body>
     <div id="mapContainer"></div>
 
     <!-- AMap SDK 加载（暴露 window.__amapPromise 供 main.js 等待） -->
+    <!-- Key 和安全密钥已硬编码 → build 产物 100% 自包含，不依赖 .env -->
 
     <!-- Supabase JS SDK (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-    <!-- 主逻辑（ES Module） -->
+    <!-- 主逻辑（ES Module） — Vite 打包入口 -->
   </body>
 </html>
