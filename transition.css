@@ -1,0 +1,133 @@
+/* ==================== 统一动画系统 ====================
+ *
+ * 所有 CSS 变量集中在 :root，各组件引用变量而非硬编码。
+ * 后续新增页面/抽屉/弹窗只需复用以下 class。
+ *
+ * 变量:
+ *   --t-fast   150ms  微交互（按钮 hover、图标旋转）
+ *   --t-normal 250ms  抽屉、弹窗
+ *   --t-slow   300ms  页面切换
+ *   --t-ease-out      cubic-bezier(0.22, 1, 0.36, 1)  自然减速
+ *   --t-ease-in-out   cubic-bezier(0.4, 0, 0.2, 1)    平滑对称
+ */
+
+:root {
+  --t-fast:   150ms;
+  --t-normal: 250ms;
+  --t-slow:   300ms;
+  --t-ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --t-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== 页面切换（全屏） ====================
+ * 用法:
+ *   transitionTo(fromEl, toEl) → fromEl 添加 .page-leaving，toEl 添加 .page-entering
+ */
+.page-leaving {
+  animation: page-out var(--t-slow) var(--t-ease-out) forwards;
+}
+.page-entering {
+  animation: page-in  var(--t-slow) var(--t-ease-out) forwards;
+}
+
+@keyframes page-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(8px); }
+}
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== Drawer 动画（侧边栏/抽屉） ====================
+ * 用法:
+ *   transitionManager.openDrawer(el)  /  closeDrawer(el)
+ *   或直接: el.classList.add("drawer-open")
+ */
+.drawer-slide {
+  transition: transform var(--t-normal) var(--t-ease-out);
+}
+
+/* 左侧抽屉（菜单、景区列表方向） */
+.drawer-slide-left {
+  transform: translateX(-100%);
+}
+.drawer-slide-left.drawer-open {
+  transform: translateX(0);
+}
+
+/* 右侧抽屉（景区详情侧边栏方向） */
+.drawer-slide-right {
+  transform: translateX(100%);
+}
+.drawer-slide-right.drawer-open {
+  transform: translateX(0);
+}
+
+/* Drawer 遮罩 */
+.drawer-overlay {
+  transition: opacity var(--t-normal) var(--t-ease-out);
+  opacity: 0;
+  pointer-events: none;
+}
+.drawer-open ~ .drawer-overlay,
+.drawer-overlay.drawer-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ==================== Modal 动画（弹窗） ====================
+ * 用法:
+ *   transitionManager.openModal(el)  /  closeModal(el)
+ *
+ * 背景层: opacity 0→1
+ * 面板层: scale(0.95→1) + opacity 0→1
+ */
+.modal-animated .modal-backdrop {
+  transition: opacity var(--t-normal) var(--t-ease-out);
+  opacity: 0;
+  pointer-events: none;
+}
+.modal-animated.modal-open .modal-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-animated .modal-panel {
+  transition: transform var(--t-normal) var(--t-ease-out),
+              opacity   var(--t-normal) var(--t-ease-out);
+  transform: scale(0.95);
+  opacity: 0;
+}
+.modal-animated.modal-open .modal-panel {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* ==================== 导航栏按钮反馈 ====================
+ * 导航按钮点击时缩放 + 高亮平滑移动
+ */
+.nav-link {
+  transition: transform var(--t-fast) var(--t-ease-out),
+              color     var(--t-fast) var(--t-ease-out),
+              background var(--t-fast) var(--t-ease-out);
+}
+.nav-link:active {
+  transform: scale(0.95);
+}
+
+/* ==================== Toast 通用动画 ==================== */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes toast-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ==================== 淡入工具类 ==================== */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>旅行地球</title>
+
+    <!-- 全局样式 — Vite 打包时自动处理 -->
+    <link rel="stylesheet" href="/transition.css" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <!-- 启动 Loading 覆盖层（初始化完成后自动淡出移除） -->
+    <div id="app-splash">
+      <div class="splash-content">
+        <div class="splash-logo">🌍</div>
+        <h1 class="splash-title">旅行地球</h1>
+        <div class="splash-progress-bar">
+          <div class="splash-progress-fill" id="splash-progress-fill"></div>
+        </div>
+        <p class="splash-status" id="splash-status">初始化应用...</p>
+      </div>
+    </div>
+
+    <div id="mapContainer"></div>
+
+    <!-- AMap SDK 加载（暴露 window.__amapPromise 供 main.js 等待） -->
+    <!-- Key 和安全密钥已硬编码 → build 产物 100% 自包含，不依赖 .env -->
+    <script type="module">
+      const AMAP_KEY = "7dfc44451d8128e329100a0c71fa90b6";
+      const AMAP_SECURITY_CODE = "db200c6e5adf1ae0023dc0d1f8a4e906";
+
+      if (AMAP_SECURITY_CODE) {
+        window._AMapSecurityConfig = { securityJsCode: AMAP_SECURITY_CODE };
+      }
+
+      // 创建 Promise，AMap SDK 加载完成后 resolve
+      window.__amapPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = `https://webapi.amap.com/maps?v=2.0&key=${encodeURIComponent(AMAP_KEY)}`;
+        script.onload = () => {
+          console.log("[index] 高德地图 SDK 加载完成");
+          resolve();
+        };
+        script.onerror = () => {
+          console.error("[index] 高德地图 SDK 加载失败");
+          reject(new Error("高德地图 SDK 加载失败"));
+        };
+        document.head.appendChild(script);
+      });
+    </script>
+
+    <!-- Supabase JS SDK (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+    <!-- 主逻辑（ES Module） — Vite 打包入口 -->
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
